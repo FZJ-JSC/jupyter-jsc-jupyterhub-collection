@@ -4,6 +4,7 @@ Created on May 17, 2019
 @author: Tim Kreuzer
 '''
 
+import copy
 import requests
 import uuid
 import json
@@ -608,6 +609,11 @@ class J4J_Spawner(Spawner):
         if state.get('use_hdf_cloud', True):
             if ux.get('HDF-Cloud', {}).get('maintenance', 'false') != "true": 
                 user_dic['HDF-Cloud'] = ux.get('HDF-Cloud', {}).get('images')
+                tmp_images = copy.deepcopy(user_dic['HDF-Cloud'])
+                for imagename, imageinfos in tmp_images.items():
+                    if imageinfos:
+                        if self.user.name not in imageinfos:
+                            del user_dic['HDF-Cloud'][imagename]
             else:
                 maintenance.append("HDF-Cloud")
         if len(user_dic.keys()) == 0:

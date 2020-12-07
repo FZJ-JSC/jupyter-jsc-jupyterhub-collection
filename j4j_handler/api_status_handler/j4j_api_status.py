@@ -118,13 +118,13 @@ class J4J_APIStatusHandler(APIHandler):
                             msg['Subject'] = "JupyterLab '{}' on {} is ready for you".format(server_name, db_spawner.user_options['system'])
                         else:
                             msg['Subject'] = "JupyterLab '{}' is ready for you".format(server_name)
-                        msg['From'] = 'jupyter.jsc@fz-juelich.de'
+                        msg['From'] = 'jupyter-jsc@fz-juelich.de'
                         msg['To'] = user.name
                         #body = MIMEText("The JupyterLab you requested has finished the spawn progress. You can visit it directly here: https://jupyter-jsc.fz-juelich.de/user/{}/{} . Or via the Control-Panel at https://jupyter-jsc.fz-juelich.de".format(user.name, server_name))
                         #msg.attach(body)
                         msg = msg.as_string()
                         s = smtplib.SMTP('mail.fz-juelich.de')
-                        s.sendmail('jupyter.jsc@fz-juelich.de', user.name, msg)
+                        s.sendmail('jupyter-jsc@fz-juelich.de', user.name, msg)
                         s.quit()
                         self.log.debug("uuidcode={} - Send email to UID={} for servername={}".format(uuidcode, user.name, server_name))
                         state['sendmail'] = False
