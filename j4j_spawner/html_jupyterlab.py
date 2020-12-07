@@ -563,7 +563,7 @@ def onchange_dd3(user_dic):
         if second == "HDF-Cloud":
             ret += '      checkboxes_jlab();\n'
         for third, rest3 in rest2.items():
-            if len(rest3.keys()) > 0:
+            if type(rest3) == dict and len(rest3.keys()) > 0:
                 ret += '      if ( value == "'+ third +'" ) {\n'
                 ret += '        $("#fourthdd_ul").html("");\n'
                 for name in sorted(rest3.keys(), key=lambda s: s.casefold()):
