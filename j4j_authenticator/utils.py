@@ -36,6 +36,7 @@ def get_user_dic(hpc_infos, partitions_path, unicore_path, log):
     log.debug(list(set(all_login_nodes)))
     ret = fit_partition(dic, partitions_path, list(set(all_login_nodes)))
     log.debug(ret)
+    return ret
 
 # Remove partitions from user_account dic, which are not supported
 def fit_partition(user_account, partitions_path, login_nodes):
