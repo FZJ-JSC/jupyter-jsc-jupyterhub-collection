@@ -26,6 +26,10 @@ def get_user_dic(hpc_infos, partitions_path, unicore_path):
         elif len(system_partition) == 2:
             partition = unicore.get(system, {}).get("partition_mapping", {}).get(system_partition[1], system_partition[1])
             dic[system][account][project][partition] = {}
+            if system in ('JUWELS') and partition in ('booster'):
+                dic[system][account][project]['LoginBooster'] = {}
+                dic[system][account][project]['develbooster'] = {}
+                dic[system][account][project]['largebooster'] = {}
     return fit_partition(dic, partitions_path)
 
 # Remove partitions from user_account dic, which are not supported
@@ -53,7 +57,7 @@ def stripper(data):
         if isinstance(v, dict):
             v = stripper(v)
         #if k in ('LoginNode', 'JURECA', 'JURON', 'JUWELS') or v not in (u'', None, {}): 
-        if k in ('LoginNode', 'LoginNodeVis') or v not in (u'', None, {}):
+        if k in ('LoginNode', 'LoginNodeVis', 'LoginBooster') or v not in (u'', None, {}):
             ret[k] = v
     return ret
 

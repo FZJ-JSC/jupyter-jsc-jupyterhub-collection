@@ -333,7 +333,7 @@ class J4J_Spawner(Spawner):
         self.reservation = self.user_options.get('reservation')
         self.starttimesec = int(time.time())
         # set http_timeout
-        if self.system == 'HDF-Cloud' or self.user_options.get('partition', 'LoginNode') in ['LoginNode', 'LoginNodeVis']:
+        if self.system == 'HDF-Cloud' or self.user_options.get('partition', 'LoginNode') in ['LoginNode', 'LoginNodeVis', 'LoginBooster']:
             self.http_timeout = 300
         else:
             self.http_timeout = 12*60*60
@@ -734,7 +734,7 @@ class J4J_Spawner(Spawner):
         if ret['system'] == 'HDF-Cloud':
             return ret
         # -- 1 --            
-        if ret['partition'] in ['LoginNode', 'LoginNodeVis']:
+        if ret['partition'] in ['LoginNode', 'LoginNodeVis', 'LoginBooster']:
             return ret
         # Resources
         ret['Resources'] = {}
