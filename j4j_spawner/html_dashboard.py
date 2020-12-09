@@ -546,7 +546,7 @@ def onchange_dd5(user_dic, reservations_dic={}):
                 for fifth in rest4.keys():
                     ret += '          if ( value == "' + fifth + '" ) {\n'
                     reservations = []
-                    if not fifth in ["LoginNode", "LoginNodeVis"]:
+                    if not fifth in ["LoginNode", "LoginNodeVis", "LoginBooster"]:
                         for name in reservations_dic.get(second, {}).get('Account', {}).get(third, {}).keys():
                             partition = reservations_dic.get(second, {}).get('Account', {}).get(third, {}).get(name, {}).get('PartitionName', "")
                             if name not in reservations:
@@ -614,8 +614,10 @@ def onchange_dd4(user_dic, dashboard_filter):
                         rest4_list.append("LoginNode")
                     if "LoginNodeVis" in rest4.keys():
                         rest4_list.append("LoginNodeVis")
+                    if "LoginBooster" in rest4.keys():
+                        rest4_list.append("LoginBooster")
                     for i in sorted(rest4.keys(), key=lambda s: s.casefold()):
-                        if not i in ["LoginNode", "LoginNodeVis"]:
+                        if not i in ["LoginNode", "LoginNodeVis", "LoginBooster"]:
                             rest4_list.append(i)
                     ret += '          $("#fifthdd_ul").html("");\n'
                     for dashboard, v1 in dashboard_filter.items():

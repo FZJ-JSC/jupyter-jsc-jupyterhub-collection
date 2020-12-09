@@ -5,11 +5,14 @@ def get_user_dic(hpc_infos, partitions_path, unicore_path):
     dic = {}
     with open(unicore_path) as f:
         unicore = json.load(f)
+    all_login_nodes = []
     for i in hpc_infos:
         infos = i.lower().split(',')
         # infos: [account, system[_partition], project, email]
         system_partition = infos[1].split('_')
         system = system_partition[0].upper()
+        login_nodes = unicore.get(system, {}).get("login_nodes", [])
+        all_login_nodes.extend(login_nodes)
         if not system in dic.keys():
             dic[system] = {}
         account = infos[0]
@@ -19,17 +22,19 @@ def get_user_dic(hpc_infos, partitions_path, unicore_path):
         if not project in dic.get(system).get(account).keys():
             dic[system][account][project] = {}
         dic[system][account][project]['LoginNode'] = {}
-        if len(unicore.get(system, {}).get('LoginNodeVis', [])) > 0:
-            dic[system][account][project]['LoginNodeVis'] = {}
+        for login_node in login_nodes:
+            if len(unicore.get(system, {}).get(login_node, [])) > 0:
+                dic[system][account][project][login_node] = {}
         if len(system_partition) == 1:
             dic[system][account][project]['batch'] = {}
         elif len(system_partition) == 2:
             partition = unicore.get(system, {}).get("partition_mapping", {}).get(system_partition[1], system_partition[1])
             dic[system][account][project][partition] = {}
-    return fit_partition(dic, partitions_path)
+    # list(set(x)) to remove duplicated entries
+    return fit_partition(dic, partitions_path, list(set(all_login_nodes)))
 
 # Remove partitions from user_account dic, which are not supported
-def fit_partition(user_account, partitions_path):
+def fit_partition(user_account, partitions_path, login_nodes):
     with open(partitions_path) as f:
         resources_json = json.load(f)
     ret = {}
@@ -44,16 +49,15 @@ def fit_partition(user_account, partitions_path):
                         continue
                     if system in resources_json.keys() and partition in resources_json.get(system):
                         ret[system][account][project][partition] = resources_json.get(system).get(partition)
-    return stripper(ret)
+    return stripper(ret, login_nodes)
 
 # remove empty entries from user_account dic (except LoginNode, because there are no resources for LoginNodes)
-def stripper(data):
+def stripper(data, login_nodes):
     ret = {}
     for k, v in data.items():
         if isinstance(v, dict):
-            v = stripper(v)
-        #if k in ('LoginNode', 'JURECA', 'JURON', 'JUWELS') or v not in (u'', None, {}): 
-        if k in ('LoginNode', 'LoginNodeVis') or v not in (u'', None, {}):
+            v = stripper(v, login_nodes)
+        if k == 'LoginNode' or k in login_nodes or v not in (u'', None, {}):
             ret[k] = v
     return ret
 
