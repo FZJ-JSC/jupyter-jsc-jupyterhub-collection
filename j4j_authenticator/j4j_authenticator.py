@@ -848,7 +848,7 @@ class BaseAuthenticator(GenericOAuthenticator):
             service_level_list = ['default']
             service_level_default = 'default'
         # Create a dictionary. So we only have to check for machines via UNICORE/X that are not known yet
-        user_accs = get_user_dic(hpc_infos, self.resources, self.unicore_infos)
+        user_accs = get_user_dic(hpc_infos, self.resources, self.unicore_infos, self.log)
         # Check for HPC Systems in self.unicore
         #waitforaccupdate = self.get_hpc_infos_via_unicorex(uuidcode, username, user_accs, accesstoken)
         

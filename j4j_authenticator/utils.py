@@ -1,7 +1,7 @@
 import json
 
 # create dic from dispatch-entry string
-def get_user_dic(hpc_infos, partitions_path, unicore_path):
+def get_user_dic(hpc_infos, partitions_path, unicore_path, log):
     dic = {}
     with open(unicore_path) as f:
         unicore = json.load(f)
@@ -12,6 +12,7 @@ def get_user_dic(hpc_infos, partitions_path, unicore_path):
         system_partition = infos[1].split('_')
         system = system_partition[0].upper()
         login_nodes = unicore.get(system, {}).get("login_nodes", [])
+        log.debug("{}: {}".format(system, login_nodes))
         all_login_nodes.extend(login_nodes)
         if not system in dic.keys():
             dic[system] = {}
@@ -31,7 +32,10 @@ def get_user_dic(hpc_infos, partitions_path, unicore_path):
             partition = unicore.get(system, {}).get("partition_mapping", {}).get(system_partition[1], system_partition[1])
             dic[system][account][project][partition] = {}
     # list(set(x)) to remove duplicated entries
-    return fit_partition(dic, partitions_path, list(set(all_login_nodes)))
+    log.debug(dic)
+    log.debug(list(set(all_login_nodes)))
+    ret = fit_partition(dic, partitions_path, list(set(all_login_nodes)))
+    log.debug(ret)
 
 # Remove partitions from user_account dic, which are not supported
 def fit_partition(user_account, partitions_path, login_nodes):
