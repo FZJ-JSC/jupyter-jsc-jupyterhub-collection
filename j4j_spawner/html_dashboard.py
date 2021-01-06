@@ -541,52 +541,53 @@ def onchange_dd5(user_dic, reservations_dic={}):
         ret += '    if ( second == "'+ second +'" ) {\n'
         for third, rest3 in rest2.items():
             ret += '      if ( third == "'+ third +'" ) {\n'
-            for fourth, rest4 in rest3.items():
-                ret += '        if ( fourth == "'+ fourth +'" ) {\n'
-                for fifth in rest4.keys():
-                    ret += '          if ( value == "' + fifth + '" ) {\n'
-                    reservations = []
-                    if not fifth in ["LoginNode", "LoginNodeVis", "LoginBooster"]:
-                        for name in reservations_dic.get(second, {}).get('Account', {}).get(third, {}).keys():
-                            partition = reservations_dic.get(second, {}).get('Account', {}).get(third, {}).get(name, {}).get('PartitionName', "")
-                            if name not in reservations:
-                                if partition == '(null)' or partition == fifth:
-                                    reservations.append(name)
-                        for name in reservations_dic.get(second, {}).get('Project', {}).get(fourth, {}).keys():
-                            partition = reservations_dic.get(second, {}).get('Project', {}).get(fourth, {}).get(name, {}).get('PartitionName', "")
-                            if name not in reservations:
-                                if partition == '(null)' or partition == fifth:
-                                    reservations.append(name)
-                    for resource_name, res_info in user_dic.get(second, {}).get(third, {}).get(fourth, {}).get(fifth, {}).items():
-                        minmax = res_info.get('MINMAX')
-                        mini = int(minmax[0])
-                        maxi = int(minmax[1])
-                        mini = int(mini / res_info.get('DIVISOR'))
-                        maxi = int(maxi / res_info.get('DIVISOR'))
-                        default = res_info.get('DEFAULT')
-                        if default == "_max_":
-                            default = maxi
-                        elif default == "_min_":
-                            default = mini
-                        text = res_info.get('TEXT').replace('_min_', "{}".format(mini)).replace('_max_', "{}".format(maxi))
-                        # only show resource if VISIBLE is not false in resource information
-                        if res_info.get('VISIBLE', 'true').lower() == 'true':
+            if type(rest3) == dict:
+                for fourth, rest4 in rest3.items():
+                    ret += '        if ( fourth == "'+ fourth +'" ) {\n'
+                    for fifth in rest4.keys():
+                        ret += '          if ( value == "' + fifth + '" ) {\n'
+                        reservations = []
+                        if not fifth in ["LoginNode", "LoginNodeVis", "LoginBooster"]:
+                            for name in reservations_dic.get(second, {}).get('Account', {}).get(third, {}).keys():
+                                partition = reservations_dic.get(second, {}).get('Account', {}).get(third, {}).get(name, {}).get('PartitionName', "")
+                                if name not in reservations:
+                                    if partition == '(null)' or partition == fifth:
+                                        reservations.append(name)
+                            for name in reservations_dic.get(second, {}).get('Project', {}).get(fourth, {}).keys():
+                                partition = reservations_dic.get(second, {}).get('Project', {}).get(fourth, {}).get(name, {}).get('PartitionName', "")
+                                if name not in reservations:
+                                    if partition == '(null)' or partition == fifth:
+                                        reservations.append(name)
+                        for resource_name, res_info in user_dic.get(second, {}).get(third, {}).get(fourth, {}).get(fifth, {}).items():
+                            minmax = res_info.get('MINMAX')
+                            mini = int(minmax[0])
+                            maxi = int(minmax[1])
+                            mini = int(mini / res_info.get('DIVISOR'))
+                            maxi = int(maxi / res_info.get('DIVISOR'))
+                            default = res_info.get('DEFAULT')
+                            if default == "_max_":
+                                default = maxi
+                            elif default == "_min_":
+                                default = mini
+                            text = res_info.get('TEXT').replace('_min_', "{}".format(mini)).replace('_max_', "{}".format(maxi))
+                            # only show resource if VISIBLE is not false in resource information
+                            if res_info.get('VISIBLE', 'true').lower() == 'true':
+                                ret += "            $('#resource_{}_div').show();\n".format(resource_name.lower())
                             ret += "            $('#resource_{}_div').show();\n".format(resource_name.lower())
-                        ret += "            $('#resource_{}_div').show();\n".format(resource_name.lower())
-                        ret += "            $('#resource_"+ resource_name.lower() +"_input').attr({\"max\": "+ "{}".format(maxi) +", \"min\": "+ "{}".format(mini) +", \"value\": "+ "{}".format(default) +" });\n"
-                        ret += "            $('#resource_"+ resource_name.lower() +"_label').text(\""+text+"\");\n"
-                    if len(reservations) > 0:
-                        reservations.insert(0, "None")
-                        ret += '            $("#sixthdd_ul").html("");\n'
-                        for name in reservations:
-                            if reservations_dic.get(second, {}).get('Account', {}).get(third, {}).get(name, {}).get('State', "") == "INACTIVE" or reservations_dic.get(second, {}).get('Project', {}).get(fourth, {}).get(name, {}).get('State', "") == "INACTIVE":
-                                ret += '            $("#sixthdd_ul").append(\'<li><a href="#" onclick="{onclick}(\\\'{key}\\\')" style="text-decoration:line-through; color:red" id="{div_prefix}_{key}">{key}</a></li>\');\n'.format(onclick="onClickDD6", div_prefix="sixthdd", key=name)
-                            else:
-                                ret += '            $("#sixthdd_ul").append(\'<li><a href="#" onclick="{onclick}(\\\'{key}\\\')" id="{div_prefix}_{key}">{key}</a></li>\');\n'.format(onclick="onClickDD6", div_prefix="sixthdd", key=name)
-                        ret += '            $("#sixthdd").val("{}").trigger("change");\n'.format(reservations[0])
-                        ret += "            $('#sixthdd_div').show();\n"
-                    ret += '          }\n'
-                ret += "        }\n"
+                            ret += "            $('#resource_"+ resource_name.lower() +"_input').attr({\"max\": "+ "{}".format(maxi) +", \"min\": "+ "{}".format(mini) +", \"value\": "+ "{}".format(default) +" });\n"
+                            ret += "            $('#resource_"+ resource_name.lower() +"_label').text(\""+text+"\");\n"
+                        if len(reservations) > 0:
+                            reservations.insert(0, "None")
+                            ret += '            $("#sixthdd_ul").html("");\n'
+                            for name in reservations:
+                                if reservations_dic.get(second, {}).get('Account', {}).get(third, {}).get(name, {}).get('State', "") == "INACTIVE" or reservations_dic.get(second, {}).get('Project', {}).get(fourth, {}).get(name, {}).get('State', "") == "INACTIVE":
+                                    ret += '            $("#sixthdd_ul").append(\'<li><a href="#" onclick="{onclick}(\\\'{key}\\\')" style="text-decoration:line-through; color:red" id="{div_prefix}_{key}">{key}</a></li>\');\n'.format(onclick="onClickDD6", div_prefix="sixthdd", key=name)
+                                else:
+                                    ret += '            $("#sixthdd_ul").append(\'<li><a href="#" onclick="{onclick}(\\\'{key}\\\')" id="{div_prefix}_{key}">{key}</a></li>\');\n'.format(onclick="onClickDD6", div_prefix="sixthdd", key=name)
+                            ret += '            $("#sixthdd").val("{}").trigger("change");\n'.format(reservations[0])
+                            ret += "            $('#sixthdd_div').show();\n"
+                        ret += '          }\n'
+                    ret += "        }\n"
             ret += "      }\n"
         ret += "    }\n"
     ret += "}\n"
