@@ -607,33 +607,34 @@ def onchange_dd4(user_dic, dashboard_filter):
         ret += '    if ( second == "'+ second +'" ) {\n'
         for third, rest3 in rest2.items():
             ret += '      if ( third == "'+ third +'" ) {\n'
-            for fourth, rest4 in rest3.items():
-                if len(rest4.keys()) > 0:
-                    ret += '        if ( value == "'+ fourth +'" ) {\n'
-                    rest4_list = []
-                    if "LoginNode" in rest4.keys():
-                        rest4_list.append("LoginNode")
-                    if "LoginNodeVis" in rest4.keys():
-                        rest4_list.append("LoginNodeVis")
-                    if "LoginBooster" in rest4.keys():
-                        rest4_list.append("LoginBooster")
-                    for i in sorted(rest4.keys(), key=lambda s: s.casefold()):
-                        if not i in ["LoginNode", "LoginNodeVis", "LoginBooster"]:
-                            rest4_list.append(i)
-                    ret += '          $("#fifthdd_ul").html("");\n'
-                    for dashboard, v1 in dashboard_filter.items():
-                        for system, v2 in v1.items():
-                            for account, v3 in v2.items():
-                                for project, v4 in v3.items():
-                                    if len(v4) > 0:
-                                        ret += '          if ( dash == "'+dashboard+'" && second == "'+system+'" && third == "'+account+'" && value == "'+project+'"){\n'
-                                        for partition in v4:
-                                            ret += '            $("#fifthdd_ul").append(\'<li><a href="#" onclick="{onclick}(\\\'{key}\\\')" id="{div_prefix}_{key}">{key}</a></li>\');\n'.format(onclick="onClickDD5", div_prefix="fifthdd", key=partition)
-                                        ret += '            $("#fifthdd").val("{}").trigger("change");\n'.format(v4[0])
-                                        ret += '          }\n'
-                    ret += "          $('#fifthdd_div').show();\n"
-                    ret += '          return;\n'
-                    ret += '        }\n'
+            if type(rest3) == dict:
+                for fourth, rest4 in rest3.items():
+                    if len(rest4.keys()) > 0:
+                        ret += '        if ( value == "'+ fourth +'" ) {\n'
+                        rest4_list = []
+                        if "LoginNode" in rest4.keys():
+                            rest4_list.append("LoginNode")
+                        if "LoginNodeVis" in rest4.keys():
+                            rest4_list.append("LoginNodeVis")
+                        if "LoginBooster" in rest4.keys():
+                            rest4_list.append("LoginBooster")
+                        for i in sorted(rest4.keys(), key=lambda s: s.casefold()):
+                            if not i in ["LoginNode", "LoginNodeVis", "LoginBooster"]:
+                                rest4_list.append(i)
+                        ret += '          $("#fifthdd_ul").html("");\n'
+                        for dashboard, v1 in dashboard_filter.items():
+                            for system, v2 in v1.items():
+                                for account, v3 in v2.items():
+                                    for project, v4 in v3.items():
+                                        if len(v4) > 0:
+                                            ret += '          if ( dash == "'+dashboard+'" && second == "'+system+'" && third == "'+account+'" && value == "'+project+'"){\n'
+                                            for partition in v4:
+                                                ret += '            $("#fifthdd_ul").append(\'<li><a href="#" onclick="{onclick}(\\\'{key}\\\')" id="{div_prefix}_{key}">{key}</a></li>\');\n'.format(onclick="onClickDD5", div_prefix="fifthdd", key=partition)
+                                            ret += '            $("#fifthdd").val("{}").trigger("change");\n'.format(v4[0])
+                                            ret += '          }\n'
+                        ret += "          $('#fifthdd_div').show();\n"
+                        ret += '          return;\n'
+                        ret += '        }\n'
             ret += "      }\n"
         ret += "    }\n"
     ret += "}\n"
