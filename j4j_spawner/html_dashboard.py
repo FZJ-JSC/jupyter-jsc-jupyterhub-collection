@@ -654,7 +654,7 @@ def onchange_dd3(user_dic, dashboard_filter):
         if second == "HDF-Cloud":
             ret += '      checkboxes_jlab();\n'
         for third, rest3 in rest2.items():
-            if len(rest3.keys()) > 0:
+            if len(rest3) > 0:
                 ret += '      if ( value == "'+ third +'" ) {\n'
                 ret += '        $("#fourthdd_ul").html("");\n'
                 for dashboard, v1 in dashboard_filter.items():
